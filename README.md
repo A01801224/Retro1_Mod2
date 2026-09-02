@@ -99,4 +99,3 @@ python src/visualizacion.py   # genera las gráficas exploratorias
 ## Resultados
 
 Ver `resultados/reporte.pdf`.
-s
