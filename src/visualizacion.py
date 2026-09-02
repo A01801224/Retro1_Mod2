@@ -88,44 +88,65 @@ def graficar_matriz_confusion(resultados, titulo, nombre_archivo):
     _guardar(nombre_archivo)
 
 
-def graficar_comparacion_metricas(resultados_arbol, resultados_bosque):
+def graficar_curva_profundidad(resultados):
     """
-    Barras comparando el arbol solo contra el bosque.
-    Es la grafica principal del analisis del reporte.
+    Curva de F1 en entrenamiento vs prueba segun la profundidad maxima.
+    Es la grafica que muestra el sobreajuste: cuando las dos lineas se
+    separan, el arbol dejo de generalizar y empezo a memorizar.
     """
+    profundidades = [r["profundidad"] for r in resultados]
+    f1_entrenamiento = [r["entrenamiento"]["f1"] for r in resultados]
+    f1_prueba = [r["prueba"]["f1"] for r in resultados]
+
+    plt.figure(figsize=(9, 5))
+    plt.plot(profundidades, f1_entrenamiento, marker="o",
+             color="steelblue", label="Entrenamiento")
+    plt.plot(profundidades, f1_prueba, marker="o",
+             color="indianred", label="Prueba")
+    plt.fill_between(profundidades, f1_entrenamiento, f1_prueba,
+                     color="gray", alpha=0.15, label="Brecha (sobreajuste)")
+    plt.title("Efecto de la profundidad maxima del arbol")
+    plt.xlabel("Profundidad maxima")
+    plt.ylabel("F1 Score")
+    plt.legend()
+    _guardar("curva_profundidad.png")
+
+
+def graficar_comparacion_criterios(resultados_entropia, resultados_gini):
+    """Barras comparando entropia contra Gini en el conjunto de prueba."""
     metricas = ["accuracy", "precision", "recall", "specificity", "f1"]
 
     etiquetas = metricas * 2
-    valores = ([resultados_arbol[m] for m in metricas] +
-               [resultados_bosque[m] for m in metricas])
-    modelos = ["Arbol solo"] * len(metricas) + ["Random Forest"] * len(metricas)
+    valores = ([resultados_entropia[m] for m in metricas] +
+               [resultados_gini[m] for m in metricas])
+    criterios = ["Entropia"] * len(metricas) + ["Gini"] * len(metricas)
 
     plt.figure(figsize=(9, 5))
-    sns.barplot(x=etiquetas, y=valores, hue=modelos,
+    sns.barplot(x=etiquetas, y=valores, hue=criterios,
                 palette=["steelblue", "seagreen"])
-    plt.title("Arbol de decision vs Random Forest")
+    plt.title("Entropia vs Gini - conjunto de prueba")
     plt.xlabel("")
     plt.ylabel("Valor")
     plt.ylim(0, 1)
     plt.legend(title="")
-    _guardar("comparacion_modelos.png")
+    _guardar("comparacion_criterios.png")
 
 
-def graficar_importancia_variables(importancias):
-    """
-    Barras con que tanto ayudo cada variable a separar las clases en el bosque.
-    Recibe un diccionario {nombre_variable: valor}.
-    """
-    ordenadas = sorted(importancias.items(), key=lambda par: par[1], reverse=True)
-    nombres = [par[0] for par in ordenadas]
-    valores = [par[1] for par in ordenadas]
+def graficar_variables_usadas(conteos, nombres_variables):
+    """Barras con en cuantos nodos se uso cada variable para partir."""
+    pares = [(nombre, conteo) for nombre, conteo
+             in zip(nombres_variables, conteos) if conteo > 0]
+    pares.sort(key=lambda par: par[1], reverse=True)
+
+    nombres = [par[0] for par in pares]
+    valores = [par[1] for par in pares]
 
     plt.figure(figsize=(8, 6))
     sns.barplot(x=valores, y=nombres, hue=nombres, palette="viridis", legend=False)
-    plt.title("Importancia de las variables en el bosque")
-    plt.xlabel("Reduccion total de impureza Gini")
+    plt.title("Variables mas usadas para partir")
+    plt.xlabel("Numero de nodos")
     plt.ylabel("")
-    _guardar("importancia_variables.png")
+    _guardar("variables_usadas.png")
 
 
 # Correr este archivo directamente genera las graficas exploratorias
