@@ -17,30 +17,41 @@ generar las gráficas del reporte.
 
 ## Dataset
 
-Pima Indians Diabetes: 768 registros, 8 variables numéricas, clasificación binaria
-(0 = no diabetes, 1 = diabetes). Distribución de clases: 500 negativos, 268 positivos.
+**Online Shoppers Purchasing Intention Dataset** (UCI Machine Learning Repository).
 
-- Entrenamiento: 614 registros (80%)
-- Prueba: 154 registros (20%)
+12,330 sesiones de un sitio de comercio electrónico, cada una perteneciente a un
+usuario distinto a lo largo de un periodo de un año. El objetivo es predecir si
+la sesión terminó en compra (columna `Revenue`).
+
+- Variables usadas: las 10 numéricas del dataset, más `Weekend` y `VisitorType`
+  codificadas manualmente como 0/1.
+- Variables descartadas: `Month`, `OperatingSystems`, `Browser`, `Region` y
+  `TrafficType`, por ser códigos categóricos sin orden real. Un corte del tipo
+  "Browser < 7" no tendría significado.
+- Entrenamiento: 80% de las sesiones. Prueba: 20%.
 - La separación usa semilla fija (42) para que los resultados sean reproducibles.
+- El dataset no tiene valores faltantes.
 
-Nota sobre calidad de los datos: varias columnas usan 0 como marcador de dato
-faltante. Insulina tiene 48.7% de ceros y GrosorPiel 29.6%. Esto se documenta
-en el reporte.
+Las clases están desbalanceadas: la mayoría de las sesiones no terminan en compra.
+Por eso el reporte no se limita a accuracy e incluye recall y F1.
+
+**Cita:** Sakar, C. & Kastro, Y. (2018). *Online Shoppers Purchasing Intention
+Dataset*. UCI Machine Learning Repository. https://doi.org/10.24432/C5F88Q
+Licencia Creative Commons Attribution 4.0 International (CC BY 4.0).
 
 ## Estructura
 
 ```
 .
 ├── src/
-│   ├── datos.py           # carga del csv, exploración y separación train/test
+│   ├── datos.py           # carga, codificación y separación train/test
 │   ├── metricas.py        # matriz de confusión y métricas, calculadas a mano
 │   ├── visualizacion.py   # gráficas del reporte
 │   ├── arbol.py           # árbol de decisión implementado desde cero
 │   ├── bosque.py          # random forest: bootstrap, N árboles y votación
 │   └── main.py            # entrena, evalúa, compara y predice
 ├── data/
-│   └── pima-indians-diabetes.csv
+│   └── online_shoppers_intention.csv
 ├── resultados/            # gráficas generadas y reporte.pdf
 ├── requirements.txt
 └── README.md
@@ -82,7 +93,7 @@ python src/visualizacion.py   # genera las gráficas exploratorias
 - Muestreo bootstrap con reemplazo
 - Submuestreo aleatorio de variables en cada nodo
 - Votación por mayoría entre los árboles del bosque
-- Separación entrenamiento/prueba
+- Codificación de las variables binarias y separación entrenamiento/prueba
 - Matriz de confusión, accuracy, precision, recall, specificity y F1
 
 ## Resultados
