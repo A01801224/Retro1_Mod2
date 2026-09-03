@@ -29,7 +29,7 @@ import visualizacion
 PROFUNDIDADES = [2, 3, 5, 8, 10, 15, 20, 30]
 
 # Configuracion del modelo final. Se ajusta despues de ver el experimento 1.
-PROFUNDIDAD_FINAL = 8
+PROFUNDIDAD_FINAL = 5
 CRITERIO_FINAL = "entropia"
 MINIMO_MUESTRAS = 20
 
