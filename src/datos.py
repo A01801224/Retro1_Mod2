@@ -3,7 +3,7 @@ datos.py
 Carga, preparacion y separacion del dataset Online Shoppers Purchasing Intention.
 
 Se usa pandas solo para leer y manipular la tabla.
-El algoritmo (arbol y bosque) esta programado a mano en arbol.py y bosque.py.
+El algoritmo es arbol.py
 """
 
 import os
