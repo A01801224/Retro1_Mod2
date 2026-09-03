@@ -48,11 +48,12 @@ Licencia Creative Commons Attribution 4.0 International (CC BY 4.0).
 ```
 .
 ├── src/
-│   ├── datos.py           # carga, codificación y separación train/test
-│   ├── metricas.py        # matriz de confusión y métricas, calculadas a mano
-│   ├── visualizacion.py   # gráficas del reporte
-│   ├── arbol.py           # árbol de decisión implementado desde cero
-│   └── main.py            # experimentos, modelo final y predicciones
+│   ├── datos.py                  # carga, codificación y separación train/test
+│   ├── metricas.py               # matriz de confusión y métricas, calculadas a mano
+│   ├── visualizacion.py          # gráficas del reporte
+│   ├── arbol.py                  # árbol de decisión implementado desde cero
+|   └── validacion_playtennis.py  # reproduce el ejercicio de clase
+│   └── main.py                   # experimentos, modelo final y predicciones
 ├── data/
 │   └── online_shoppers_intention.csv
 ├── resultados/            # gráficas generadas y reporte.pdf
@@ -82,10 +83,11 @@ python src/main.py
 Cada módulo también se puede ejecutar por separado para probarlo:
 
 ```bash
-python src/datos.py           # resumen del dataset
-python src/arbol.py           # validacion contra Play Tennis y arbol de prueba
-python src/metricas.py        # verificación de las fórmulas
-python src/visualizacion.py   # genera las gráficas exploratorias
+python src/datos.py                    # resumen del dataset
+python src/arbol.py                    # pruebas de las formulas del arbol
+python src/validacion_playtennis.py    # reproduce el ejercicio de clase
+python src/metricas.py                 # verificación de las fórmulas
+python src/visualizacion.py            # genera las gráficas exploratorias
 ```
 
 ## Qué se implementó a mano
