@@ -1,15 +1,12 @@
 """
 main.py
-Programa principal del entregable.
-
-Corre todo de un jalon:
+Corre todo de una:
   1. Resumen del dataset
   2. Experimento 1: efecto de la profundidad maxima (sobreajuste)
   3. Experimento 2: entropia contra Gini
   4. Modelo final con la mejor configuracion
   5. Predicciones de ejemplo en consola
   6. Graficas para el reporte
-
 Se ejecuta con:  python src/main.py
 """
 
@@ -35,30 +32,16 @@ MINIMO_MUESTRAS = 20
 
 
 def separador(titulo):
-    """Imprime un encabezado para que la salida se lea ordenada."""
     print()
-    print("=" * 70)
     print(titulo)
-    print("=" * 70)
+    print()
 
 
 def experimento_profundidad(X_entrenamiento, y_entrenamiento,
                             X_prueba, y_prueba, cortes):
     """
     EXPERIMENTO 1: como afecta la profundidad maxima al desempeno.
-
-    Se entrena un arbol por cada profundidad y se miden las metricas
-    en entrenamiento Y en prueba. La comparacion entre ambas es lo que
-    revela el sobreajuste del que habla la lamina 22:
-
-      - Con arboles poco profundos, ambas metricas son bajas y parecidas.
-        El modelo esta subajustado: no alcanza a capturar los patrones.
-      - Conforme crece la profundidad, ambas suben.
-      - A partir de cierto punto, la metrica de entrenamiento sigue
-        subiendo pero la de prueba se estanca o baja. Ahi el arbol dejo
-        de aprender patrones y empezo a memorizar los datos.
-
-    La separacion entre las dos curvas es la medida visual del sobreajuste.
+    Se entrena un arbol por cada profundidad y se miden las metricas en entrenamiento Y en prueba.
     """
     resultados = []
 
@@ -97,15 +80,7 @@ def experimento_criterios(X_entrenamiento, y_entrenamiento,
                           X_prueba, y_prueba, cortes):
     """
     EXPERIMENTO 2: entropia contra Gini.
-
-    Se entrena el mismo arbol, con la misma profundidad y los mismos
-    datos, cambiando unicamente el criterio de impureza.
-
-    Recordatorio importante para el reporte: los VALORES de impureza de
-    los dos criterios no son comparables entre si porque estan en
-    escalas distintas (entropia va de 0 a 1, Gini de 0 a 0.5). Lo que
-    si se compara son los cortes que elige cada uno y las metricas
-    finales que producen.
+    Se entrena el mismo arbol, con la misma profundidad y los mismosdatos, cambiando unicamente el criterio de impureza.
     """
     resultados = {}
 
@@ -137,13 +112,8 @@ def experimento_criterios(X_entrenamiento, y_entrenamiento,
 
 
 def predicciones_de_ejemplo(arbol, X_prueba, y_prueba, cuantas=10):
-    """
-    Requisito 3 del entregable: correr predicciones en consola.
-
-    Se toman registros del conjunto de prueba, se predice cada uno y se
-    compara contra la clase real. Se eligen casos de las dos clases para
-    que se vean aciertos y errores, no solo el caso facil.
-    """
+    # correr predicciones en consola.
+    
     indices_positivos = [i for i, clase in enumerate(y_prueba) if clase == 1]
     indices_negativos = [i for i, clase in enumerate(y_prueba) if clase == 0]
 
@@ -171,9 +141,7 @@ def predicciones_de_ejemplo(arbol, X_prueba, y_prueba, cuantas=10):
 def main():
     inicio_total = time.time()
 
-    # ------------------------------------------------------------------
     separador("1. DATASET")
-    # ------------------------------------------------------------------
     datos = preparar_variables(cargar_datos())
     entrenamiento, prueba = separar_entrenamiento_prueba(datos)
 
@@ -196,9 +164,7 @@ def main():
 
     cortes = preparar_cortes(X_entrenamiento, 32)
 
-    # ------------------------------------------------------------------
     separador("2. EXPERIMENTO 1 - EFECTO DE LA PROFUNDIDAD")
-    # ------------------------------------------------------------------
     resultados_profundidad = experimento_profundidad(
         X_entrenamiento, y_entrenamiento, X_prueba, y_prueba, cortes)
 
@@ -206,9 +172,7 @@ def main():
     print(f"\n  Mejor F1 en prueba: profundidad {mejor['profundidad']} "
           f"con {mejor['prueba']['f1']:.4f}")
 
-    # ------------------------------------------------------------------
     separador("3. EXPERIMENTO 2 - ENTROPIA VS GINI")
-    # ------------------------------------------------------------------
     resultados_criterios = experimento_criterios(
         X_entrenamiento, y_entrenamiento, X_prueba, y_prueba, cortes)
 
@@ -220,9 +184,7 @@ def main():
         print(f"  {metrica:<14}{valor_entropia:>12.4f}{valor_gini:>12.4f}"
               f"{valor_gini - valor_entropia:>+12.4f}")
 
-    # ------------------------------------------------------------------
     separador(f"4. MODELO FINAL - {CRITERIO_FINAL}, profundidad {PROFUNDIDAD_FINAL}")
-    # ------------------------------------------------------------------
     arbol_final = construir_arbol(X_entrenamiento, y_entrenamiento, cortes,
                                   criterio=CRITERIO_FINAL,
                                   profundidad_maxima=PROFUNDIDAD_FINAL,
@@ -250,14 +212,10 @@ def main():
                                   criterio=CRITERIO_FINAL, profundidad_maxima=3)
     imprimir_arbol(arbol_chico, VARIABLES)
 
-    # ------------------------------------------------------------------
     separador("5. PREDICCIONES DE EJEMPLO")
-    # ------------------------------------------------------------------
     predicciones_de_ejemplo(arbol_final, X_prueba, y_prueba)
 
-    # ------------------------------------------------------------------
     separador("6. GRAFICAS")
-    # ------------------------------------------------------------------
     visualizacion.graficar_distribucion_clases(datos)
     visualizacion.graficar_histogramas(datos)
     visualizacion.graficar_correlacion(datos)

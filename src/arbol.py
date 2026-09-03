@@ -1,7 +1,6 @@
 """
 arbol.py
-Arbol de decision desde cero, siguiendo ID3 con entropia y ganancia de informacion.
-Se incluye tambien el criterio Gini para comparar ambos al final en el reporte.
+Arbol de decision desde cero
 """
 
 import math
@@ -54,9 +53,8 @@ def gini(conteo_positivos, conteo_negativos):
 
 def impureza(conteo_positivos, conteo_negativos, criterio="entropia"):
     """
-    Sirve para que el resto del arbol no sepa ni le importe cual criterio se usa, solo llama a impuersa, ára que
-    cuando se hagan las dos corridas, solo se cambie este parametro en un solo lugar en ves de mover el algoritmo
-    recibe el criterio a usar decidido por el usuario
+    Sirve para que el resto del arbol no sepa cual criterio se usa, solo llama a impuersa, ára que cundo se hagan las dos corridas, solo se cambie este parametro en un solo lugar en ves de mover el algoritmo
+    recibe el criterio a usar 
     """
     if criterio == "entropia":
         return entropia(conteo_positivos, conteo_negativos)
@@ -69,7 +67,6 @@ def impureza(conteo_positivos, conteo_negativos, criterio="entropia"):
 def ganancia(grupos, criterio="entropia"):
     """
     Cuanta impureza se elimina al partir un grupo en varios subgrupos.
-
     grupos: lista de tuplas (positivos, negativos), una por cada subgrupo resultante del corte.
     Regresa un numero: entre mas grande, mejor el corte.
     """
@@ -95,14 +92,10 @@ def ganancia(grupos, criterio="entropia"):
 
 def cortes_candidatos(valores, numero_cortes=32):
     """
-    Elige umbrales candidatos repartidos por percentiles.
-
-    En vez de probar todos los valores posibles como umbral, se toman
-    unos cuantos repartidos parejo a lo largo del rango. Con 32 cortes,
+    En vez de probar todos los valores posibles como umbral, se toman unos cuantos repartidos parejo a lo largo del rango. Con 32 cortes,
     cada uno cae aproximadamente cada 3% de los datos.
 
-    Se quitan los repetidos: si una variable tiene pocos valores
-    distintos (por ejemplo Weekend, que solo vale 0 o 1), muchos
+    Se quitan los repetidos: si una variable tiene pocos valores distintos (por ejemplo Weekend, que solo vale 0 o 1), muchos
     percentiles caen en el mismo numero.
     """
     valores_ordenados = sorted(valores)
@@ -119,15 +112,11 @@ def contar_grupos(columna, y, umbral):
     """
     Aplica un corte y cuenta como quedaron los dos grupos.
 
-    columna: los valores de UNA variable, uno por registro
-    y:       las clases, 1 = positivo, 0 = negativo
-    umbral:  el numero contra el que se compara
+    columna: los valores de UNA variable, uno por registro, y: las clases, 1 = positivo, 0 = negativo umbral: el numero contra el que se compara
 
-    Regla: si el valor es MENOR que el umbral va a la izquierda,
-    si no, a la derecha.
+    Regla: si el valor es MENOR que el umbral va a la izquierda, si no, a la derecha.
 
-    Regresa el formato que espera ganancia():
-      [(positivos_izq, negativos_izq), (positivos_der, negativos_der)]
+    Regresa el formato que espera ganancia(): [(positivos_izq, negativos_izq), (positivos_der, negativos_der)]
     """
     positivos_izquierda = negativos_izquierda = 0
     positivos_derecha = negativos_derecha = 0
@@ -152,12 +141,7 @@ def preparar_cortes(X, numero_cortes=32):
     """
     Calcula los cortes candidatos de TODAS las variables, una sola vez.
 
-    Esto se hace al principio del entrenamiento, no en cada nodo.
-    La razon es de eficiencia: cortes_candidatos() ordena los valores,
-    y ordenar 12 columnas en cada uno de los cientos de nodos del arbol
-    seria el cuello de botella del programa. Los candidatos calculados
-    sobre todos los datos de entrenamiento sirven igual en cualquier nodo.
-
+    Esto se hace al principio del entrenamiento, no en cada nodo. 
     Regresa una lista con los umbrales de cada variable.
     """
     numero_variables = len(X[0])
@@ -170,8 +154,7 @@ def mejor_corte(X, y, cortes, criterio="entropia", variables_candidatas=None):
     """
     Prueba todos los cortes candidatos y regresa el que mas ganancia da.
 
-    X:      lista de registros
-    y:      lista de clases
+    X:lista de registros, y:lista de clases
     cortes: lo que regresa preparar_cortes()
     variables_candidatas: cuales variables considerar.
             None = todas.
@@ -205,11 +188,8 @@ def mejor_corte(X, y, cortes, criterio="entropia", variables_candidatas=None):
 class Nodo:
     """
     Una pieza del arbol. Puede ser de dos tipos:
-
-    - Nodo interno: hace una pregunta ("PageValues < 0.58?") y tiene
-      dos hijos, uno para cada respuesta.
+- Nodo interno: hace una pregunta ("PageValues < 0.58?") y tiene dos hijos, uno para cada respuesta.
     - Hoja: ya no pregunta nada, solo dice que clase predice.
-
     Se distingue uno de otro con es_hoja().
     """
 
@@ -235,8 +215,7 @@ class Nodo:
 def construir_arbol(X, y, cortes, criterio="entropia", profundidad_maxima=10,
                     minimo_muestras=20, profundidad=0):
     """
-    Construye el arbol recursivamente. Es el algoritmo ID3 de la lamina 12,
-    adaptado a cortes binarios sobre variables numericas.
+    Construye el arbol recursivamente.
     """
     positivos = sum(y)
     negativos = len(y) - positivos
@@ -294,8 +273,7 @@ def construir_arbol(X, y, cortes, criterio="entropia", profundidad_maxima=10,
 
 def crear_hoja(positivos, negativos):
     """
-    Crea una hoja. Predice la clase mayoritaria de los registros
-    que llegaron hasta ahi. En empate predice 0, que es la clase
+    Crea una hoja. Predice la clase mayoritaria de los registros que llegaron hasta ahi. En empate predice 0, que es la clase
     mas comun en el dataset.
     """
     clase = 1 if positivos > negativos else 0
@@ -321,14 +299,8 @@ def predecir_registro(nodo, registro):
     """
     Recorre el arbol desde la raiz hasta una hoja y regresa la clase.
 
-    En cada nodo interno se compara el valor del registro contra el
-    umbral y se baja por la rama que corresponde. Se repite hasta
+    En cada nodo interno se compara el valor del registro contra elumbral y se baja por la rama que corresponde. Se repite hasta
     llegar a una hoja, que es la que dice la prediccion.
-
-    IMPORTANTE: la comparacion tiene que ser exactamente la misma que
-    se uso al entrenar en contar_grupos(), o sea MENOR estricto va a
-    la izquierda. Si aqui se usara <= en lugar de <, los registros que
-    caen justo en el umbral se irian por la rama equivocada.
     """
     while not nodo.es_hoja():
         if registro[nodo.variable] < nodo.umbral:
@@ -368,15 +340,7 @@ def contar_hojas(nodo):
 
 def contar_variables_usadas(nodo, numero_variables):
     """
-    Cuenta en cuantos nodos se uso cada variable para partir.
-
-    Es una medida sencilla de importancia: si una variable aparece en
-    muchos nodos es porque resulta util para separar las clases.
-
-    Ojo con como se describe en el reporte: la importancia formal pesa
-    cada nodo por cuanta impureza elimino y por cuantos registros lo
-    atravesaron. Esta version solo cuenta apariciones, asi que es una
-    aproximacion.
+    Cuenta en cuantos nodos se uso cada variable para partir. Si una variable aparece en muchos nodos es porque resulta util para separar las clases.
     """
     conteos = [0] * numero_variables
 
